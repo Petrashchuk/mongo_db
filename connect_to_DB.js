@@ -9,7 +9,6 @@ client.connect().then(async () => {
     const users = client.db("DataBase").createCollection("users");
 
     Promise.all([ideas, feedbacks, users]).then(res => {
-        console.log(res);
     });
 });
 module.exports = client;
