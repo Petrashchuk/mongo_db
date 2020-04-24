@@ -6,7 +6,10 @@ const max = 60;
 
 let count = 30000;
 const users = [];
+//todo rename this directory to utils or helpers (lowercase)
 
+//todo for loop
+//todo add `gender` field => male | female
 while (count >= 10) {
     names.forEach((name, index) => {
         users.push({
@@ -18,5 +21,7 @@ while (count >= 10) {
         count--
     })
 }
+
+//todo add function 'getRandomName(), randomGender(), getRandomNationality()'
 
 module.exports = users;
