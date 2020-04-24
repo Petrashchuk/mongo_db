@@ -15,7 +15,6 @@ while (count >= 10) {
             nationality: nationality[index],
             gender: index % 2 === 0 ? 'male' : 'female'
         });
-
         count--
     })
 }
