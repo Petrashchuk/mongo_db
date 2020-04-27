@@ -1,7 +1,17 @@
+const MongoClient = require('../create_instance_to_DB');
 
-module.exports.remove_all_users = function (req, res) {
-    const collection = MongoClient.db('DataBase').collection('users');
-    collection.remove().then(res => {
-        console.log(res);
+let collection_ideas;
+MongoClient().then(client => {
+    client.db('DataBase').collections().then(res => {
     });
+    collection_ideas = client.db('DataBase').collection('ideas');
+});
+
+
+module.exports.create_idea = function (req, res) {
+    collection_ideas.insertOne(req.body).then(response => {
+        res.send(response)
+    }).catch(e => {
+        res.send(e)
+    })
 };
