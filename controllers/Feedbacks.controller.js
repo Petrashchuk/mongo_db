@@ -10,3 +10,8 @@ module.exports.create_feedback = function (req, res) {
         res.send(response)
     });
 };
+module.exports.remove_feedbacks = function (req, res) {
+    collection_feedbacks.deleteMany({}).then(response => {
+        res.send(response);
+    });
+};

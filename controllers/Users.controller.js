@@ -12,7 +12,7 @@ module.exports.create_user = function (req, res) {
 
     collection_users.insertOne(req.body).then(user => {
         res.send(user)
-    }).catch(e=>{
+    }).catch(e => {
         res.send(e)
     });
 };
@@ -20,7 +20,7 @@ module.exports.create_user = function (req, res) {
 module.exports.remove_all_users = function (req, res) {
     //todo initialize outside the function
     //todo rename collections => userCollections
-    collection_users.remove().then(response => {
+    collection_users.deleteMany({}).then(response => {
         res.send(response);
     });
 };
