@@ -44,10 +44,12 @@ async function fillUser(client, usersCount) {
         for (let i = 0; i < notEnoughUser; i++) {
             let randomN = Math.floor(Math.random() * 30000);
             arr.push(usersArray[randomN])
+            //todo ?
         }
         return client.db("DataBase").collection("users").insertMany(arr)
     } else if (!usersCount) {
         return client.db("DataBase").collection("users").insertMany(usersArray)
+        //todo ?
     }
 };
 
