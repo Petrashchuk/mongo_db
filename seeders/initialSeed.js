@@ -27,31 +27,13 @@ async function fillIdeas(client, users) {
     })
 }
 
-async function fillUser(client, usersCount) {
-    if (usersCount && usersCount < 30000) {
-        const notEnoughUser = 30000 - usersCount;
-        const arr = [];
-        for (let i = 0; i < notEnoughUser; i++) {
-            let randomN = Math.floor(Math.random() * 30000);
-            arr.push(usersArray[randomN])
-        }
-        return client.db("DataBase").collection("users").insertMany(arr)
-    } else if (!usersCount) {
-        return client.db("DataBase").collection("users").insertMany(usersArray)
-    }
+async function fillUser(client) {
+    const users = await usersArray();
+    return client.db("DataBase").collection("users").insertMany(users);
 };
 
-function isDbFull(client, usersCount) {
-    if (usersCount && usersCount < 30000) return false;
-    else if (!usersCount) return false;
-    else return true;
-}
-
 module.exports = async function fillDB(client) {
-    const usersCount = await client.db("DataBase").collection("users").find({}).count();
-    if (!isDbFull(client, usersCount)) {
-        const users = await fillUser(client, usersCount);
-        const ideas = await fillIdeas(client, users);
-        const feedbacks = await fillFeedback(client, users, ideas);
-    }
+    const users = await fillUser(client);
+    const ideas = await fillIdeas(client, users);
+    const feedbacks = await fillFeedback(client, users, ideas);
 };
