@@ -16,6 +16,6 @@ module.exports.remove_feedbacks = function (req, res) {
     });
 };
 
-module.exports.show_statistic = function (req, res) {
-    res.send('ok')
+module.exports.show_statistic = async function (req, res) {
+    const cursor = await collection_feedbacks.find({});
 };

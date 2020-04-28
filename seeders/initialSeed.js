@@ -24,14 +24,24 @@ async function fillIdeas(client, users) {
     })
 }
 
-async function fillUser(client) {
-    const users = await require('../helpers/randomizer');
-
+async function fillUser(client, users) {
     return client.db("DataBase").collection("users").insertMany(users);
 };
 
+function isDbNotFull(users) {
+    if (users && users.length) {
+        return true
+    }
+    return false
+}
+
+
 module.exports = async function fillDB(client) {
-    const users = await fillUser(client);
-    const ideas = await fillIdeas(client, users);
-    const feedbacks = await fillFeedback(client, users, ideas);
+    const arrayOfUsers = await require('../helpers/randomizer');
+
+    if (isDbNotFull(arrayOfUsers)) {
+        const users = await fillUser(client, arrayOfUsers);
+        const ideas = await fillIdeas(client, users);
+        const feedbacks = await fillFeedback(client, users, ideas);
+    }
 };

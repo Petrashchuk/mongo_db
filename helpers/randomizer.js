@@ -37,7 +37,7 @@ function randomGender() {
 }
 
 
-module.exports = new Promise(function (resolve, reject) {
+module.exports = new Promise(resolve => {
     MongoClient().then(async (client) => {
         let count_user = await client.db('DataBase').collection('users').find({}).count();
         resolve(arrayUsers(count_user));
