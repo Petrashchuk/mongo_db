@@ -6,10 +6,6 @@ const ages_max = 60;
 
 let count = 30000;
 const users = [];
-//todo rename this directory to utils or helpers (lowercase)
-
-//todo for loop
-//todo add `gender` field => male | female
 
 function fillUsers() {
     while (count > 0) {
@@ -24,8 +20,6 @@ function fillUsers() {
 
 }
 
-fillUsers();
-
 function getRandomName() {
     return names[Math.floor((Math.random() * names.length))]
 }
@@ -38,6 +32,6 @@ function randomGender() {
     return gender[Math.floor((Math.random() * gender.length))]
 }
 
-//todo add function 'getRandomName(), randomGender(), getRandomNationality()'
+fillUsers();
 
 module.exports = users;

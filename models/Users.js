@@ -1,4 +1,3 @@
-
 const user_Schema = {
     validator: {
         $jsonSchema: {

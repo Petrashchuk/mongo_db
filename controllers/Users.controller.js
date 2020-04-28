@@ -6,10 +6,6 @@ MongoClient().then(client => {
 });
 
 module.exports.create_user = function (req, res) {
-    // const {age, gender, nationality} = req.body;
-    //todo initialize outside the function
-    //todo rename collections => userCollections
-
     collection_users.insertOne(req.body).then(user => {
         res.send(user)
     }).catch(e => {
@@ -18,8 +14,6 @@ module.exports.create_user = function (req, res) {
 };
 
 module.exports.remove_all_users = function (req, res) {
-    //todo initialize outside the function
-    //todo rename collections => userCollections
     collection_users.deleteMany({}).then(response => {
         res.send(response);
     });
