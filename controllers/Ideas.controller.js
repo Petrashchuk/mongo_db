@@ -2,8 +2,6 @@ const MongoClient = require('../create_instance_to_DB');
 
 let collection_ideas;
 MongoClient().then(client => {
-    client.db('DataBase').collections().then(res => {
-    });
     collection_ideas = client.db('DataBase').collection('ideas');
 });
 
