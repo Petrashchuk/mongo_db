@@ -15,3 +15,7 @@ module.exports.remove_feedbacks = function (req, res) {
         res.send(response);
     });
 };
+
+module.exports.show_statistic = function (req, res) {
+    res.send('ok')
+};

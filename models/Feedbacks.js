@@ -10,7 +10,7 @@ const feedback_Schema = {
                 },
                 userId: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 },
                 value: {
                     bsonType: 'string',

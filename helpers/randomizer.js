@@ -1,9 +1,4 @@
 const MongoClient = require('../create_instance_to_DB');
-let users_collection;
-MongoClient().then(async (client) => {
-    users_collection = await client.db('DataBase').collection('users');
-
-});
 
 
 const names = ["John", "Marry", "Bob", "Christina", "Will", "Natali", "Jack", "Anna", "Peter", "Viktoria"];
@@ -15,14 +10,7 @@ const ages_max = 60;
 let count = 30000;
 
 
-async function checkUserCount() {
-    const count_user = await users_collection.find({}).count();
-    const users = fillUsers(count_user);
-    return users;
-}
-
-
-function fillUsers(users_count) {
+function arrayUsers(users_count) {
     const users = [];
     while (count > users_count) {
         users.push({
@@ -49,4 +37,9 @@ function randomGender() {
 }
 
 
-module.exports = checkUserCount;
+module.exports = new Promise(function (resolve, reject) {
+    MongoClient().then(async (client) => {
+        let count_user = await client.db('DataBase').collection('users').find({}).count();
+        resolve(arrayUsers(count_user));
+    });
+});

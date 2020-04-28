@@ -6,23 +6,23 @@ const user_Schema = {
             properties: {
                 firstName: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 },
                 age: {
                     bsonType: "int",
-                    "description": "must be a int and is required"
+                    description: "must be a int and is required"
                 },
                 gender: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 },
                 nationality: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 },
                 ideas: {
                     bsonType: "array",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 }
             }
         }

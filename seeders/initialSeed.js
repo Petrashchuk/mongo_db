@@ -1,6 +1,3 @@
-const usersArray = require('../helpers/randomizer');
-
-
 async function fillFeedback(client, users, ideas) {
     const feedback = [];
     const values = ['yes', 'no'];
@@ -28,7 +25,8 @@ async function fillIdeas(client, users) {
 }
 
 async function fillUser(client) {
-    const users = await usersArray();
+    const users = await require('../helpers/randomizer');
+
     return client.db("DataBase").collection("users").insertMany(users);
 };
 

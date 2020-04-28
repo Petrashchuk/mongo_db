@@ -6,11 +6,11 @@ const ideas_Schema = {
             properties: {
                 description: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 },
                 userId: {
                     bsonType: "string",
-                    "description": "must be a string and is required"
+                    description: "must be a string and is required"
                 }
             }
         }
