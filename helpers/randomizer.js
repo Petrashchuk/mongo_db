@@ -17,7 +17,7 @@ let count = 30000;
 
 async function checkUserCount() {
     const count_user = await users_collection.find({}).count();
-    const users = await fillUsers(count_user);
+    const users = fillUsers(count_user);
     return users;
 }
 
