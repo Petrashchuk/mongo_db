@@ -1,5 +1,5 @@
 const MongoClient = require('../create_instance_to_DB');
-const userRandom = require('../helpers/randomizer');
+
 let collection_users;
 MongoClient().then(client => {
     collection_users = client.db('DataBase').collection('users');
