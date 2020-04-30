@@ -11,10 +11,12 @@ module.exports.remove_feedbacks = function (req, res) {
     });
 };
 
-module.exports.show_statistic = async function (req, res) {
-    const cursor = await collection_feedbacks.find({});
-
-    await collection_ideas.aggregate([{$match:{ _id:"id"}}]).toArray((err, result) => {
-        console.log(result);
-    });
+module.exports.show_statistic = function (req, res) {
+    const gender_counter = collection_users.aggregate([
+        {$group: {_id: "$gender", total: {$sum: 1}}},
+    ]);
+    const values_counter = collection_feedbacks.aggregate([
+        {$group: {_id: '$value', value: {$sum: 1}}}]);
+    console.log(gender_counter);
+    console.log(values_counter);
 };
