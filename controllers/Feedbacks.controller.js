@@ -19,11 +19,17 @@ module.exports.remove_feedbacks = function (req, res) {
 };
 
 module.exports.show_statistic = function (req, res) {
+    let json_obj = {};
     const gender_counter = collection_users.aggregate([
         {$group: {_id: "$gender", total: {$sum: 1}}},
     ]);
     const values_counter = collection_feedbacks.aggregate([
         {$group: {_id: '$value', value: {$sum: 1}}}]);
-    console.log(gender_counter);
-    console.log(values_counter);
+    gender_counter.forEach(item => {
+
+    });
+    values_counter.forEach(item => {
+        console.log(item);
+    });
+    console.log(json_obj);
 };

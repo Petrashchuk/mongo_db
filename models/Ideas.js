@@ -11,6 +11,10 @@ const ideas_Schema = {
                 userId: {
                     bsonType: "string",
                     description: "must be a string and is required"
+                },
+                feedbacks: {
+                    bsonType: "array",
+                    description: "must be a array of string and is required"
                 }
             }
         }

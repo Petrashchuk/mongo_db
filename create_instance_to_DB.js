@@ -1,6 +1,6 @@
 const feedback_Schema = require('./models/Feedbacks');
 const user_Schema = require('./models/Users');
-const ideas_Schema = require('./models/Ideas')
+const ideas_Schema = require('./models/Ideas');
 
 const {MongoClient} = require('mongodb');
 const uri = "mongodb+srv://petrashchuk_andrii:Vito9550@cluster0-fvywc.mongodb.net/DataBase?retryWrites=true&w=majority";
