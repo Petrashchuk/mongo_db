@@ -1,23 +1,19 @@
-const feedback_Schema = {
-    validator: {
-        $jsonSchema: {
-            bsonType: "object",
-            required: ["ideaId", "userId", "value"],
-            properties: {
-                ideaId: {
-                    bsonType: "string",
-                    description: "must be a string if the field exists"
-                },
-                userId: {
-                    bsonType: "string",
-                    description: "must be a string and is required"
-                },
-                value: {
-                    bsonType: 'string',
-                    description: "must be a string if the field exists"
-                }
-            }
-        }
+const mongoose = require('mongoose');
+const {Schema} = mongoose;
+
+const FeedbackSchema = new Schema({
+    value: {
+        type: Boolean,
+        required: true
+    },
+    ideaId: {
+        type: Schema.Types.ObjectId,
+        ref: "Ideas"
+    },
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
     }
-};
-module.exports = feedback_Schema;
+});
+
+mongoose.model('Feedbacks', FeedbackSchema);

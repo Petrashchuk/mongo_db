@@ -1,12 +1,3 @@
-const MongoClient = require('../create_instance_to_DB');
-
-let collection_feedbacks;
-let collection_users;
-MongoClient().then(client => {
-    collection_feedbacks = client.db('DataBase').collection('feedbacks');
-    collection_users = client.db('DataBase').collection('users');
-});
-
 module.exports.create_feedback = function (req, res) {
     collection_feedbacks.insertOne(req.body).then(response => {
         res.send(response)
@@ -19,17 +10,11 @@ module.exports.remove_feedbacks = function (req, res) {
 };
 
 module.exports.show_statistic = function (req, res) {
-    let json_obj = {};
     const gender_counter = collection_users.aggregate([
         {$group: {_id: "$gender", total: {$sum: 1}}},
     ]);
     const values_counter = collection_feedbacks.aggregate([
         {$group: {_id: '$value', value: {$sum: 1}}}]);
-    gender_counter.forEach(item => {
-
-    });
-    values_counter.forEach(item => {
-        console.log(item);
-    });
-    console.log(json_obj);
+    console.log(gender_counter);
+    console.log(values_counter);
 };

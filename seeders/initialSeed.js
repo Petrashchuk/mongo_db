@@ -1,4 +1,20 @@
-async function fillFeedback(client, users, ideas) {
+const mongoose = require('mongoose');
+
+module.exports = async function fillDB() {
+    const Users = mongoose.model('users');
+    const Feedbacks = mongoose.model('Feedbacks');
+    const Ideas = mongoose.model('Ideas');
+
+    const arrayOfUsers = await require('../helpers/randomizer');
+
+    if (arrayOfUsers.length > 0) {
+        const users = await fillUser(arrayOfUsers);
+        const ideas = await fillIdeas(users);
+        await fillFeedback(users, ideas);
+    }
+};
+
+async function fillFeedback(users, ideas) {
     const feedback = [];
     const values = ['yes', 'no'];
     for (let i = 0; i < users.ops.length; i++) {
@@ -11,37 +27,20 @@ async function fillFeedback(client, users, ideas) {
             value: values[n]
         });
     }
-    return client.db("DataBase").collection("feedbacks").insertMany(feedback);
+    return Feedbacks.insertMany(feedback);
 }
 
-async function fillIdeas(client, users) {
-    const randomUser = Math.floor(Math.random() * users.ops.length);
+async function fillIdeas(users) {
+    const randomUser = Math.floor(Math.random() * users.length);
     const description = "is it Cool?";
-    const userId = users.ops[randomUser]._id.toHexString();
-    return client.db("DataBase").collection("ideas").insertOne({
+    console.log(users[randomUser]._id);
+    const userId = users[randomUser]._id;
+    return Ideas.insertOne({
         description,
         userId
-    })
+    });
 }
 
-async function fillUser(client, users) {
-    return client.db("DataBase").collection("users").insertMany(users);
-};
-
-function isDbNotFull(users) {
-    if (users && users.length) {
-        return true
-    }
-    return false
-}
-
-
-module.exports = async function fillDB(client) {
-    const arrayOfUsers = await require('../helpers/randomizer');
-
-    if (isDbNotFull(arrayOfUsers)) {
-        const users = await fillUser(client, arrayOfUsers);
-        const ideas = await fillIdeas(client, users);
-        const feedbacks = await fillFeedback(client, users, ideas);
-    }
+async function fillUser(users) {
+    return Users.insertMany(users);
 };

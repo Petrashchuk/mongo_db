@@ -1,5 +1,7 @@
-const MongoClient = require('../create_instance_to_DB');
 
+
+const mongoose = require('mongoose');
+const Users = mongoose.model('users');
 
 const names = ["John", "Marry", "Bob", "Christina", "Will", "Natali", "Jack", "Anna", "Peter", "Viktoria"];
 const nationality = ["Ukraine", "Russian", "Italia", "French", "Germany", "Japan", "China", "Croatia", "Spain", "Greece"];
@@ -9,16 +11,21 @@ const ages_max = 60;
 
 let count = 30000;
 
+module.exports = new Promise(resolve => {
+    Users.countDocuments({}, (err, users_count) => {
+        resolve(createNecessaryUsers(users_count));
+    });
+});
 
-function arrayUsers(users_count) {
+function createNecessaryUsers(users_count) {
     const users = [];
     while (count > users_count) {
-        users.push({
-            firstName: getRandomName(),
+        users.push(new Users({
+            name: getRandomName(),
             age: Math.floor(Math.random() * (ages_max - ages_min + 1)) + ages_min,
             nationality: getRandomNationality(),
             gender: randomGender()
-        });
+        }));
         count--
     }
     return users;
@@ -35,11 +42,3 @@ function getRandomNationality() {
 function randomGender() {
     return gender[Math.floor((Math.random() * gender.length))]
 }
-
-
-module.exports = new Promise(resolve => {
-    MongoClient().then(async (client) => {
-        let count_user = await client.db('DataBase').collection('users').find({}).count();
-        resolve(arrayUsers(count_user));
-    });
-});
