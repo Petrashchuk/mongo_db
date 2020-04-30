@@ -1,8 +1,4 @@
-
-
 const mongoose = require('mongoose');
-const Users = mongoose.model('users');
-
 const names = ["John", "Marry", "Bob", "Christina", "Will", "Natali", "Jack", "Anna", "Peter", "Viktoria"];
 const nationality = ["Ukraine", "Russian", "Italia", "French", "Germany", "Japan", "China", "Croatia", "Spain", "Greece"];
 const gender = ['female', 'male'];
@@ -12,6 +8,8 @@ const ages_max = 60;
 let count = 30000;
 
 module.exports = new Promise(resolve => {
+    const Users = mongoose.model('Users');
+
     Users.countDocuments({}, (err, users_count) => {
         resolve(createNecessaryUsers(users_count));
     });
