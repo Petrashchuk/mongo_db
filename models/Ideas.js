@@ -5,7 +5,7 @@ const IdeaSchema = new Schema({
     description: String,
     user_id: {
         type: Schema.Types.ObjectId,
-        ref: 'users'
+        ref: 'Users'
     },
     feedbacks: [{
         type: Schema.Types.ObjectId,
