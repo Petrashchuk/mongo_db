@@ -31,7 +31,7 @@ async function fillIdeas(users,index) {
 }
 
 async function fillUser(users) {
-    const Users = mongoose.model('users');
+    const Users = mongoose.model('Users');
     return Users.insertMany(users);
 };
 
