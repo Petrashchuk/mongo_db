@@ -1,4 +1,3 @@
-const userRandom = require('../helpers/randomizer');
 
 module.exports.create_user = function (req, res) {
     collection_users.insertOne(req.body).then(user => {
