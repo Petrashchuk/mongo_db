@@ -1,20 +1,36 @@
+const mongoose = require('mongoose');
+const Feedbacks = mongoose.model('Feedbacks');
+const Users = mongoose.model('Users');
+
 module.exports.create_feedback = function (req, res) {
-    collection_feedbacks.insertOne(req.body).then(response => {
-        res.send(response)
-    });
+
 };
 module.exports.remove_feedbacks = function (req, res) {
-    collection_feedbacks.deleteMany({}).then(response => {
-        res.send(response);
-    });
+
 };
 
-module.exports.show_statistic = function (req, res) {
-    const gender_counter = collection_users.aggregate([
-        {$group: {_id: "$gender", total: {$sum: 1}}},
-    ]);
-    const values_counter = collection_feedbacks.aggregate([
-        {$group: {_id: '$value', value:  {$sum: 1}}}]);
-    console.log(gender_counter);
-    console.log(values_counter);
+module.exports.show_statistic = async function (req, res) {
+
+    const response = await Feedbacks.aggregate([
+        {
+            $lookup: {
+                "from": "users",
+                "localField": "userId",
+                "foreignField": "_id",
+                "as": "user"
+            }
+        },
+        {"$unwind": "$user"},
+    ]).facet({
+        "yes": [
+            {$match: {value: true}},
+            {$group: {_id: "$user.gender", count: {$sum: 1}, avg_ages: {$avg: "$user.age"}}}
+
+        ],
+        "no": [
+            {$match: {value: false}},
+            {$group: {_id: "$user.gender", count: {$sum: 1}, avg_ages: {$avg: "$user.age"}}}
+        ]
+    });
+    console.log(response);
 };
