@@ -26,7 +26,7 @@ module.exports.show_statistic = async function (req, res) {
             {$match: {value: true}},
             {
                 $project: {
-                    "range": {
+                    range: {
                         $concat: [
                             {$cond: [{$and: [{$gte: ["$user.age", 20]}, {$lt: ["$user.age", 30]}]}, "20 - 29", ""]},
                             {$cond: [{$and: [{$gte: ["$user.age", 30]}, {$lt: ["$user.age", 40]}]}, "30 - 39", ""]},
@@ -34,17 +34,13 @@ module.exports.show_statistic = async function (req, res) {
                             {$cond: [{$and: [{$gte: ["$user.age", 50]}, {$lt: ["$user.age", 61]}]}, "50 - 60", ""]},
                         ]
                     },
+                    userGender: "$user.gender"
+
                 }
             },
 
-            {
-                $group: {
-                    _id: "$range",
-                    count: {
-                        $sum: 1
-                    },
-                },
-            },
+            {$group: {_id: {userGender: "$userGender", range: "$range"}, count: {$sum: 1}}},
+
 
         ],
         "no": [{$match: {value: false}}, {
@@ -56,13 +52,13 @@ module.exports.show_statistic = async function (req, res) {
                         {$cond: [{$and: [{$gte: ["$user.age", 40]}, {$lt: ["$user.age", 50]}]}, "40 - 49", ""]},
                         {$cond: [{$and: [{$gte: ["$user.age", 50]}, {$lt: ["$user.age", 61]}]}, "50 - 60", ""]},
                     ]
-                }
+                },
+                userGender: "$user.gender"
             }
         },
-            {$group: {_id: "$range", count: {$sum: 1}}},
+            {$group: {_id: {userGender: "$userGender", range: "$range"}, count: {$sum: 1}}},
         ]
     });
-    console.log(ages);
 
     const countries = Feedbacks.aggregate([
         {
@@ -74,15 +70,6 @@ module.exports.show_statistic = async function (req, res) {
             }
         },
         {$unwind: "$user"},
-        {
-            $group: {
-                _id: {userGender: "$user.gender", userNationality: "$user.nationality"},
-                count_users: {$sum: 1},
-                // ages: {$push: "$user.age"},
-                // "ages": {$range: [0, "$user.age", 10]}
-                // probabilityArr: {$push: {count: {$sum: 1}}}
-            }
-        },
 
         // {
         //     $group: {
@@ -91,54 +78,98 @@ module.exports.show_statistic = async function (req, res) {
         //         avg_ages: {$avg: "$avg_ages"},
         //     }
         // },
-    ]);
+    ]).facet({
+        "yes": [
+            {$match: {value: true}},
+            {
+                $group: {
+                    _id: {userGender: "$user.gender", userNationality: "$user.nationality"},
+                    count: {$sum: 1},
+                }
+            },
+        ],
+        "no": [
+            {$match: {value: false}},
+            {
+                $group: {
+                    _id: {userGender: "$user.gender", userNationality: "$user.nationality"},
+                    count: {$sum: 1},
+                }
+            },
+        ]
+    });
 
     Promise.all([ages, countries]).then(response => {
         const [ages, countries] = response;
-        ages.flat();
-        console.log(ages);
-        console.log(response);
+
+        const usersVoitedNo = voitedUsers(countries[0].no);
+        const usersVoitedYes = voitedUsers(countries[0].yes);
+
+        const agesMaleYes = filterByGender(ages[0].yes, 'male');
+        const agesFemaleYes = filterByGender(ages[0].yes, 'female');
+        const agesFemaleNo = filterByGender(ages[0].no, 'female');
+        const agesMaleNo = filterByGender(ages[0].no, 'male');
+
+        const maleVoitedYes = voitedUsers(agesMaleYes);
+        const femaleVoitedYes = voitedUsers(agesFemaleYes);
+        const maleVoitedNo = voitedUsers(agesMaleNo);
+        const femaleVoitedNo = voitedUsers(agesFemaleNo);
+
+        ages[0].yes.forEach(item => {
+            if (item._id.userGender === 'female') {
+                item.percentage = parseFloat(countPercantage(femaleVoitedYes, item.count))
+            } else if (item._id.userGender === 'male') {
+                item.percentage = parseFloat(countPercantage(maleVoitedYes, item.count))
+            }
+        });
+
+        ages[0].no.forEach(item => {
+            if (item._id.userGender === 'female') {
+                item.percentage = parseFloat(countPercantage(femaleVoitedNo, item.count))
+            } else if (item._id.userGender === 'male') {
+                item._id.percentage = parseFloat(countPercantage(maleVoitedNo, item.count))
+            }
+        });
+        const countriesVoitedMaleYes = filterByGender(countries[0].yes, 'male');
+        const countriesVoitedFemaleYes = filterByGender(countries[0].yes, 'female');
+        const countriesVoitedMaleNo = filterByGender(countries[0].no, 'male');
+        const countriesVoitedFemaleNo = filterByGender(countries[0].no, 'female');
+
+        const countriesMaleYes = countVoicebyGenderInCountries(countriesVoitedMaleYes, usersVoitedYes + usersVoitedNo);
+        const countriesFemaleYes = countVoicebyGenderInCountries(countriesVoitedFemaleYes, usersVoitedYes + usersVoitedNo);
+        const countriesMaleNo = countVoicebyGenderInCountries(countriesVoitedMaleNo, usersVoitedYes + usersVoitedNo);
+        const countriesFemaleNo = countVoicebyGenderInCountries(countriesVoitedFemaleNo, usersVoitedYes + usersVoitedNo);
+
+        let statistic = {
+            yes: {
+                male: {
+                    sum: countriesVoitedMaleYes.reduce((c, item) => c + item.count, 0),
+                    countries: countriesMaleYes,
+                    ages: agesMaleYes
+                },
+                female: {
+                    sum: countriesVoitedFemaleYes.reduce((c, item) => c + item.count, 0),
+                    countries: countriesFemaleYes,
+                    ages: agesFemaleYes
+                }
+            },
+            no: {
+                male: {
+                    sum: countriesVoitedMaleNo.reduce((c, item) => c + item.count, 0),
+                    countries: countriesMaleNo,
+                    ages: agesMaleNo
+                },
+                female: {
+                    sum: countriesVoitedFemaleNo.reduce((c, item) => c + item.count, 0),
+                    countries: countriesFemaleNo,
+                    ages: agesFemaleNo
+                }
+            }
+        };
+        res.json(statistic)
+
+
     })
-
-
-    // const usersVoitedYes = voitedUsers(await response[0].yes);
-    // const usersVoitedNo = voitedUsers(await response[0].no);
-    //
-    // const countriesVoitedMaleYes = filterByGender(response[0].yes, 'male');
-    // const countriesVoitedFemaleYes = filterByGender(response[0].yes, 'female');
-    // const countriesVoitedMaleNo = filterByGender(response[0].no, 'male');
-    // const countriesVoitedFemaleNo = filterByGender(response[0].no, 'female');
-    //
-    // const countriesMaleYes = countVoicebyGenderInCountries(countriesVoitedMaleYes, usersVoitedYes + usersVoitedNo);
-    // const countriesFemaleYes = countVoicebyGenderInCountries(countriesVoitedFemaleYes, usersVoitedYes + usersVoitedNo);
-    // const countriesMaleNo = countVoicebyGenderInCountries(countriesVoitedMaleNo, usersVoitedYes + usersVoitedNo);
-    // const countriesFemaleNo = countVoicebyGenderInCountries(countriesVoitedFemaleNo, usersVoitedYes + usersVoitedNo);
-    //
-    //
-    // let obj = {
-    //     yes: {
-    //         male: {
-    //             sum: countriesVoitedMaleYes.reduce((c, item) => c + item.count_users, 0),
-    //             countries: countriesMaleYes,
-    //             // ages:
-    //         },
-    //         female: {
-    //             sum: countriesVoitedFemaleYes.reduce((c, item) => c + item.count_users, 0),
-    //             countries: countriesFemaleYes
-    //         }
-    //     },
-    //     no: {
-    //         male: {
-    //             sum: countriesVoitedMaleNo.reduce((c, item) => c + item.count_users, 0),
-    //             countries: countriesMaleNo
-    //         },
-    //         female: {
-    //             sum: countriesVoitedFemaleNo.reduce((c, item) => c + item.count_users, 0),
-    //             countries: countriesFemaleNo
-    //         }
-    //     }
-    // };
-    // console.log(obj);
 };
 
 
@@ -148,7 +179,7 @@ function countPercantage(allusers, eachCountryUser) {
 }
 
 function voitedUsers(array) {
-    return array.reduce((c, item) => c + item.count_users, 0)
+    return array.reduce((c, item) => c + item.count, 0)
 }
 
 function filterByGender(array, gender) {
@@ -163,7 +194,7 @@ function countVoicebyGenderInCountries(array, allUsersVoice) {
     return array.map(item => {
         return {
             name: item._id.userNationality,
-            percentage: parseFloat(countPercantage(allUsersVoice, item.count_users))
+            percentage: parseFloat(countPercantage(allUsersVoice, item.count))
 
         };
     })
