@@ -102,13 +102,14 @@ module.exports.show_statistic = async function (req, res) {
     Promise.all([ages, countries]).then(response => {
         const [ages, countries] = response;
 
-        const usersVoitedNo = voitedUsers(countries[0].no);
-        const usersVoitedYes = voitedUsers(countries[0].yes);
+        /**
+         * Ages
+         */
 
         const agesMaleYes = filterByGender(ages[0].yes, 'male');
+        const agesMaleNo = filterByGender(ages[0].no, 'male');
         const agesFemaleYes = filterByGender(ages[0].yes, 'female');
         const agesFemaleNo = filterByGender(ages[0].no, 'female');
-        const agesMaleNo = filterByGender(ages[0].no, 'male');
 
         const maleVoitedYes = voitedUsers(agesMaleYes);
         const femaleVoitedYes = voitedUsers(agesFemaleYes);
@@ -130,6 +131,12 @@ module.exports.show_statistic = async function (req, res) {
                 item._id.percentage = parseFloat(countPercantage(maleVoitedNo, item.count))
             }
         });
+        /**
+         * Countries
+         */
+        const usersVoitedNo = voitedUsers(countries[0].no);
+        const usersVoitedYes = voitedUsers(countries[0].yes);
+
         const countriesVoitedMaleYes = filterByGender(countries[0].yes, 'male');
         const countriesVoitedFemaleYes = filterByGender(countries[0].yes, 'female');
         const countriesVoitedMaleNo = filterByGender(countries[0].no, 'male');
@@ -172,6 +179,9 @@ module.exports.show_statistic = async function (req, res) {
     })
 };
 
+function calculatePercentagebyAges(array) {
+
+}
 
 function countPercantage(allusers, eachCountryUser) {
     const onePercentage = allusers / 100;
