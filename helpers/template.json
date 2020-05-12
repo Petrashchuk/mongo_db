@@ -1,0 +1,20 @@
+{
+  yes: {
+    male: {
+      sum
+      ages: [{
+        type: “20-30”
+        percentage:
+      }]
+      countries: [{
+        name: “Ukraine”
+        percentage:
+      }]
+    }
+    female
+  },
+  no: {
+    male
+    female
+  }
+}

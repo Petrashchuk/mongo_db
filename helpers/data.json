@@ -1,0 +1,35 @@
+{
+  "names": [
+    "John",
+    "Marry",
+    "Bob",
+    "Christina",
+    "Will",
+    "Natali",
+    "Jack",
+    "Anna",
+    "Peter",
+    "Viktoria"
+  ],
+  "nationality": [
+    "Ukraine",
+    "Russian",
+    "Italia",
+    "French",
+    "Germany",
+    "Japan",
+    "China",
+    "Croatia",
+    "Spain",
+    "Greece"
+  ],
+  "gender": [
+    "female",
+    ",male"
+  ],
+  "ageRange": [
+    20,
+    60
+  ],
+  "usersCount": 30000
+}

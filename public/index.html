@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test test</title>
+</head>
+<body>
+<h1>Hello Марічка</h1>
+
+<button id="btnData">Get data</button>
+
+<script>
+    document.getElementById('btnData').addEventListener('click', () => {
+        fetch(window.location.origin + '/api/feedback/show_statistic')
+            .then(data => data.json())
+            .then(data => console.log(data));
+    });
+
+</script>
+
+</body>
+</html>
