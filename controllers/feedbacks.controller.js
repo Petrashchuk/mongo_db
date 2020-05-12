@@ -42,7 +42,6 @@ module.exports.show_statistic = async function (req, res) {
                         _id: "$_id.GENDER",
                         AGES_GROUP: {
                             "$push": {
-                                // AGE: "$_id.AGE",
                                 AGE_RANGE: {
                                     $concat: [
                                         {$cond: [{$and: [{$gte: ["$_id.AGE", 20]}, {$lt: ["$_id.AGE", 30]}]}, "20 - 29", ""]},
@@ -59,7 +58,8 @@ module.exports.show_statistic = async function (req, res) {
                                 COUNTRY: "$_id.COUNTRY",
                                 count: "$count"
                             }
-                        }
+                        },
+                        count: { $sum: "$count" }
                     }
                 }
             ],
@@ -98,6 +98,7 @@ module.exports.show_statistic = async function (req, res) {
                                 count: "$count"
                             }
                         },
+                        count: { $sum: "$count" }
                     }
                 }
             ]
@@ -340,18 +341,4 @@ formatRangeAges = (answers) => {
         answers[answerKey].sum = answerSum;
     }
     return answers;
-};
-
-module.exports.music = async (req, res) => {
-    // fetch('https://imusic.xn--41a.wiki/public/download_song.php?id=-2001459429_65459429&title=%D0%9D%D0%B5%D0%BF%D0%BE%D0%B3%D0%BE%D0%B4%D0%B0&artist=%D0%93%D1%83%D1%84%20murovei&hash=3da02fe85571686503b5b1b37b468d4af95b6c3f2415ce18dd0f30f470527c5a')
-    //     .then(result => result.json())
-    //     .then(result => {
-    //         console.log(result);
-    //     });
-
-    fetch('https://s3.xn--41a.wiki/1/6338_046a4f851a999c9ce4a605cb910504fe.mp3?filename=guf-murovei_-_nepogoda.mp3').then(async result => {
-        console.log(result);
-        let a = await result.buffer();
-        res.status(200).send(a);
-    })
 };
