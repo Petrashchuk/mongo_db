@@ -3,7 +3,6 @@ const fetch = require('node-fetch');
 const Feedbacks = mongoose.model('Feedbacks');
 const {ageRange} = require('../helpers/data');
 
-
 module.exports.create_feedback = function (req, res) {
 
 };
@@ -13,6 +12,9 @@ module.exports.remove_feedbacks = function (req, res) {
 };
 
 module.exports.show_statistic = async function (req, res) {
+
+    let start = new Date();
+
     await Feedbacks.aggregate([
         {
             $lookup: {
@@ -106,6 +108,10 @@ module.exports.show_statistic = async function (req, res) {
     ).exec((err, result) => {
         if (err) return res.status(400).json(err);
 
+        let end1 = new Date();
+
+        console.log('Query time', end1.getTime() - start.getTime());
+
         result.forEach(answers => {
             for (let answerKey in answers) {
                 answers[answerKey].forEach(objByGender => {
@@ -114,6 +120,10 @@ module.exports.show_statistic = async function (req, res) {
                 });
             }
         });
+
+        let end2 = new Date();
+
+        console.log('Cycle time', end2.getTime() - end1.getTime());
 
         res.status(200).json(result);
     });
@@ -291,33 +301,6 @@ formatCountry = (arr, arrProp) => {
     }
     return obj2;
 };
-
-function countPercantage(allusers, eachCountryUser) {
-    const onePercentage = allusers / 100;
-    return (eachCountryUser / onePercentage).toFixed(2)
-}
-
-function voitedUsers(array) {
-    return array.reduce((c, item) => c + item.count, 0)
-}
-
-function filterByGender(array, gender) {
-    return array.filter(item => {
-        if (item._id.userGender === gender) {
-            return item
-        }
-    });
-}
-
-function countVoicebyGenderInCountries(array, allUsersVoice) {
-    return array.map(item => {
-        return {
-            name: item._id.userNationality,
-            percentage: parseFloat(countPercantage(allUsersVoice, item.count))
-
-        };
-    })
-}
 
 getRanges = (ageRange) => {
     let arr = [];
