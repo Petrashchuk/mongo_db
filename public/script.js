@@ -1,5 +1,6 @@
 document.getElementById('btnData').addEventListener('click', function () {
     const t0 = performance.now();
+    this.setAttribute('disabled', true);
     fetch(window.location.origin + '/api/feedback/show_statistic')
         .then(data => data.json())
         .then(data => {
@@ -11,6 +12,6 @@ document.getElementById('btnData').addEventListener('click', function () {
                 });
             }
             const t1 = performance.now();
-            document.querySelector('#perf').innerHTML = `<h3>Performance: ${((t1-t0)/1000).toFixed(2)} sec</h3>`;
+            document.querySelector('#perf').innerHTML = `<h3>Performance: ${((t1 - t0) / 1000).toFixed(2)} sec</h3>`;
         });
 });
