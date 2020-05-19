@@ -3,20 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Test test</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
 </head>
 <body>
-<h1>Hello Марічка</h1>
+<style>
+    h1, button {font-family: "Segoe UI"}
+    body {padding: 30px}
+    #pie {display: block}
 
-<button id="btnData">Get data</button>
+    .toolTip {
+        position: absolute;
+        display: none;
+        min-width: 80px;
+        height: auto;
+        background: none repeat scroll 0 0 #ffffff;
+        border: 1px solid #6F257F;
+        padding: 14px;
+        text-align: center;
+    }
+</style>
+<h1>
+    <span>Hello</span>
+    <button id="btnData" class="btn btn-default">Get data</button>
+    <span id="perf"></span>
+</h1>
 
+<svg id="pie" width="300" height="300"></svg>
+
+
+<script src="https://d3js.org/d3.v5.js"></script>
+<script src="pieChart.js"></script>
+<script src="barChart.js"></script>
 <script>
-    document.getElementById('btnData').addEventListener('click', () => {
+    document.getElementById('btnData').addEventListener('click', function () {
+        const t0 = performance.now();
         fetch(window.location.origin + '/api/feedback/show_statistic')
             .then(data => data.json())
-            .then(data => console.log(data));
+            .then(data => {
+                createPie(data[0]);
+                for (let key in data[0]) {
+                    data[0][key].forEach(item => {
+                        createBarChart(item.AGES_GROUP, item._id, key);
+                        createBarChart(item.COUNTRY_GROUP, item._id, key);
+                    });
+                }
+                const t1 = performance.now();
+                document.querySelector('#perf').innerHTML = `<h3>Performance: ${((t1-t0)/1000).toFixed(2)} sec</h3>`;
+            });
     });
 
 </script>
+
 
 </body>
 </html>
