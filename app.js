@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
 const fillDB = require('./seeders/initialSeed');
+var serveStatic = require('serve-static');
 
 mongoose.promise = global.Promise;
 
@@ -22,11 +23,13 @@ app.use(require('morgan')('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(serveStatic(path.join(__dirname, 'public')));
+
 
 app.use(require('./routes'));
 
 fillDB();
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log('Example app listening on port 3000!');
 });
